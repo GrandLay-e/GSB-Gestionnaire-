@@ -1,4 +1,4 @@
-@extends ('sommaire')
+@extends ('sommaireGestionnaire')
 @section('contenu1')
     <div id="contenu">
         <h2>Les visiteurs </h2>
@@ -17,11 +17,9 @@
                 </p>
             </div>
             <div class="piedForm">
-                <p>
-                    <input type="hidden" name="idvisiteur" value="{{ $idvisiteur }}" />
+                    <input type="hidden" name="idvisiteur" value="{{ $visiteur['id'] }}" />
                     <input id="ok" type="submit" value="Valider" size="20" />
                     <input id="annuler" type="reset" value="Effacer" size="20" />
-                </p>
             </div>
 
         </form>

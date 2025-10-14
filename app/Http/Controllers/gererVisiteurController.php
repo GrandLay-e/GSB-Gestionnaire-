@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use PdoGsb;
 
-class grerVisiteurController extends Controller{
+class gererVisiteurController extends Controller{
     function choisirVisiteur(Request $request){
         if( session('gestionnaire') != null){
             $lesVisiteurs = PdoGsb::getLesVisiteurs();

@@ -14,7 +14,7 @@ class ConnexionController extends Controller
         $login = $request['login'];
         $mdp = $request['mdp'];
         $gestionnaire = PdoGsb::getInfosGestionnaire($login,$mdp);
-        if(!isset($gestionnaire)){
+        if(!is_array($gestionnaire)){
             $visiteur = PdoGsb::getInfosVisiteur($login,$mdp);
             if(!is_array($visiteur)){
                 $erreurs[] = "Login ou mot de passe incorrect(s)";

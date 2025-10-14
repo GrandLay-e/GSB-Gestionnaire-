@@ -1,13 +1,15 @@
+<?php
+$gestionnaire = session('gestionnaire');?>
 @extends('modeles/gestionnaire')
     @section('menu')
-        <!-- Division pour le sommaire -->
+            <!-- Division pour le sommaire -->
         <div id="menuGauche">
             <div id="infosUtil">
 
             </div>
             <ul id="menuList">
                 <li >
-                    <strong>Bonjour {{ $gestionnaire['nom']}} </strong>
+                    <strong>Bonjour {{$gestionnaire['nom']}} </strong>
 
                 </li>
                 <li class="smenu">
