@@ -5,11 +5,11 @@ use Illuminate\Http\Request;
 use PdoGsb;
 
 class gererVisiteurController extends Controller{
-    function choisirVisiteur(Request $request){
+    function supprimerVisiteur(Request $request){
         if( session('gestionnaire') != null){
             $gestionnaire = session('gestionnaire');
             $lesVisiteurs = PdoGsb::getLesVisiteurs();
-            $view = view('choisirVisiteur')
+            $view = view('supprimerVisiteur')
                 ->with('lesVisiteurs', $lesVisiteurs)
                 ->with('gestionnaire', $gestionnaire)
                 ->with ('method',$request->method());

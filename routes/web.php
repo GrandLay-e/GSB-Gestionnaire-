@@ -48,10 +48,14 @@ Route::post('sauvegarderFrais',[
         'uses'=>'gererFraisController@sauvegarderFrais'
 ]);
         /*------------------ Use cas gèer les visiteurs ----------------------------- */
-Route::get('choisirVisiteur',[
-        'as'=>'chemin_choisirVisiteur',
-        'uses'=>'gererVisiteurController@choisirVisiteur'
+Route::get('supprimerVisiteur',[
+        'as'=>'chemin_supprimerVisiteur',
+        'uses'=>'gererVisiteurController@supprimerVisiteur'
 ]);
 
+Route::post('supprimer', [
+    'as' => 'chemin_validerSuppressionVisiteur',
+    'uses' => 'gererVisiteurController@validerSuppressionVisiteur'
+]);
 
 

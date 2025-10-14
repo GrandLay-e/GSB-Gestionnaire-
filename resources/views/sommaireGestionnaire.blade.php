@@ -11,7 +11,7 @@
 
                 </li>
                 <li class="smenu">
-                    <a href="{{route('chemin_choisirVisiteur')}}" title="Supprimer visiteur">Suppression de visiteur </a>
+                    <a href="{{route('chemin_supprimerVisiteur')}}" title="Supprimer visiteur">Suppression de visiteur </a>
                 </li>
                 <li class="smenu">
                     <a href="{{ route('chemin_deconnexion') }}"" title="Se déconnecter">Déconnexion</a>
