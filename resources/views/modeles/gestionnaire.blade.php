@@ -15,6 +15,7 @@
     </div>
     @yield('menu')
     @yield('contenu1')
+    @stack('scripts')
     @yield('contenu2')
 </div>
 

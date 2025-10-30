@@ -31,6 +31,7 @@ class ConnexionController extends Controller
     }
     function deconnecter(){
             session(['visiteur' => null]);
+            session(['gestionnaire' => null]);
             return redirect()->route('chemin_connexion');
     }
 
