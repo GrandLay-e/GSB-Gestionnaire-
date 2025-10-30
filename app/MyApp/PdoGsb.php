@@ -232,4 +232,21 @@ class PdoGsb{
         $lesLignes = $res->fetchAll();
         return $lesLignes;
     }
+
+    public function archiverVisiteur($idVisiteur){
+        // Archiver visiteur
+        $req_visiteur = "update visiteur set ARCHIVED = 1 where id = ?";
+        $stmt = $this->monPdo->prepare($req_visiteur);
+        $stmt->execute([$idVisiteur]);
+
+        // Archiver ligne frais forfait
+        $req_ligne = "update lignefraisforfait set ARCHIVED = 1 where idVisiteur = ?";
+        $stmt = $this->monPdo->prepare($req_ligne);
+        $stmt->execute([$idVisiteur]);
+
+        // Archiver fiche frais
+        $req_fiche = "update fichefrais set ARCHIVED = 1 where idVisiteur = ?";
+        $stmt = $this->monPdo->prepare($req_fiche);
+        $stmt->execute([$idVisiteur]);
+    }
 }

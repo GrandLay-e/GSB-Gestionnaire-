@@ -19,4 +19,24 @@ class gererVisiteurController extends Controller{
             return view('connexion')->with('erreurs',null);
         }
     }
+
+    function validerSuppressionVisiteur(Request $request){
+        if( session('gestionnaire') != null){
+            $message = "";
+            $gestionnaire = session('gestionnaire');
+            $idVisiteur = $request->input('lstVisiteur');
+            if($idVisiteur != null){
+                PdoGsb::archiverVisiteur($idVisiteur);
+                $message = "Visiteur supprimé avec succès";
+            }
+            $lesVisiteurs = PdoGsb::getLesVisiteurs();
+            return redirect()->route('chemin_supprimerVisiteur')
+                // ->with('lesVisiteurs', $lesVisiteurs)
+                // ->with('gestionnaire', $gestionnaire)
+                ->with('message', $message);
+        }
+        else{
+            return view('connexion')->with('erreurs',null);
+        }
+    }
 }

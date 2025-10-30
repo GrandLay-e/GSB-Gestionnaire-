@@ -3,12 +3,12 @@
 ## 🔐 Authentification et Sécurité
 
 ### Cas d'utilisation : Se connecter
-- [ ] Créer le formulaire de connexion
-- [ ] Implémenter la validation des credentials (login: [login], mot de passe: [password])
-- [ ] Gérer les sessions utilisateur
-- [ ] Afficher l'identité du gestionnaire connecté
-- [ ] Implémenter la déconnexion
-- [ ] Gérer les erreurs de connexion
+- [x] Créer le formulaire de connexion
+- [x] Implémenter la validation des credentials (login: [login], mot de passe: [password])
+- [x] Gérer les sessions utilisateur
+- [x] Afficher l'identité du gestionnaire connecté
+- [x] Implémenter la déconnexion
+- [x] Gérer les erreurs de connexion
 
 ### Sécurité
 - [ ] **Protection des URLs** - Empêcher l'accès direct aux pages sans connexion
@@ -18,12 +18,12 @@
 ## 👥 Gestion des Visiteurs Médicaux
 
 ### Cas d'utilisation : Supprimer un visiteur médical
-- [ ] Créer la page de liste des visiteurs
-- [ ] Implémenter la sélection d'un visiteur à supprimer
-- [ ] Vérifier l'existence de fiches de frais associées
-- [ ] Demander confirmation de suppression
+- [x] Créer la page de liste des visiteurs
+- [x] Implémenter la sélection d'un visiteur à supprimer
+- [x] Vérifier l'existence de fiches de frais associées
+- [x] Demander confirmation de suppression
 - [ ] Gérer l'annulation de suppression
-- [ ] Implémenter la suppression complète des données
+- [x] Implémenter la suppression complète des données
 - [ ] **Archivage** - Créer les fichiers d'archivage (PDF, texte ou tableur)
 
 ## 🏗️ Infrastructure

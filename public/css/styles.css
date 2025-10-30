@@ -354,3 +354,10 @@ table.listeLegere th.libelle {
     font-size: 1.1em;
     width: 95%;
 }
+
+.alert-success{
+    background-color: rgb(4, 170, 15);
+    color: rgb(149, 242, 188);
+    font-size: 1.1em;
+    width: 100%
+}

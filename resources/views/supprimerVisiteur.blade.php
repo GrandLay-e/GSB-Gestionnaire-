@@ -18,10 +18,10 @@
                 </p>
             </div>
             <div class="piedForm">
-                    <input id ="nomCompletVisiteur" type="hidden" name="completeName" value="{{ $visiteur['nom'] ." ". $visiteur['prenom']}}" />
-                    <input type="hidden" name="idvisiteur" value="{{ $visiteur['id'] }}" />
                     <input id="ok" type="submit" value="Supprimer" size="20" />
             </div>
+        <div class="message alert alert-success" id="message"></div>
+    </div>
         </form>
     @push('scripts')
         <script src="{{asset('js/confirmSuppression.js')}}"> </script>

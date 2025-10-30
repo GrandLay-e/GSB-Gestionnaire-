@@ -53,7 +53,7 @@ Route::get('supprimerVisiteur',[
         'uses'=>'gererVisiteurController@supprimerVisiteur'
 ]);
 
-Route::post('supprimer', [
+Route::post('supprimerVisiteur', [
     'as' => 'chemin_validerSuppressionVisiteur',
     'uses' => 'gererVisiteurController@validerSuppressionVisiteur'
 ]);
