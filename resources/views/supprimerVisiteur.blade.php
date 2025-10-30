@@ -5,9 +5,8 @@
         <h2>Les visiteurs </h2>
         <h3>Visiteur à supprimer</h3>
         <form action="{{ route('chemin_validerSuppressionVisiteur') }}" method="post">
-            {{ csrf_field() }} <!-- laravel va ajouter un champ caché avec un token -->
+            {{ csrf_field() }}
             <div class="corpsForm"><p>
-                   <!-- <label for="lstMois" >Mois : </label> !-->
                     <select id="lstVisiteur" name="lstVisiteur">
                         @foreach($lesVisiteurs as $visiteur)
                             <option value="{{ $visiteur['id'] }}">
