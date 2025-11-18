@@ -36,10 +36,15 @@ class PdoGsb{
 */
 	public function getInfosVisiteur($login, $mdp){
 		$req = "select visiteur.id as id, visiteur.nom as nom, visiteur.prenom as prenom from visiteur
-        where visiteur.login='" . $login . "' and visiteur.mdp='" . $mdp ."' and visiteur.ARCHIVED != 1" ;
-    	$rs = $this->monPdo->query($req);
-		$ligne = $rs->fetch();
-		return $ligne;
+        where visiteur.login= :login and visiteur.mdp= :mdp and visiteur.ARCHIVED != 1" ;
+        $stmt = $this->monPdo->prepare($req);
+        $stmt->bindParam(":login", $login, PDO::PARAM_STR);
+        $stmt->bindParam(":mdp", $mdp, PDO::PARAM_STR);
+        $stmt->execute();
+    	//$rs = $this->monPdo->query($req);
+		//$ligne = $rs->fetch();
+		$ligne = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $ligne;
 	}
 
 
@@ -56,12 +61,19 @@ class PdoGsb{
 		$req = "select fraisforfait.id as idfrais, fraisforfait.libelle as libelle,
 		lignefraisforfait.quantite as quantite from lignefraisforfait inner join fraisforfait
 		on fraisforfait.id = lignefraisforfait.idfraisforfait
-		where lignefraisforfait.idvisiteur ='$idVisiteur' and lignefraisforfait.mois='$mois'
+		where lignefraisforfait.idvisiteur =:idVisiteur and lignefraisforfait.mois=:mois
 		and lignefraisforfait.ARCHIVED != 1 and lignefraisforfait.idvisiteur in
         (select visiteur.id from visiteur where visiteur.ARCHIVED != 1)
 		order by lignefraisforfait.idfraisforfait";
-		$res = $this->monPdo->query($req);
-		$lesLignes = $res->fetchAll();
+
+        $stmt = $this->monPdo->prepare($req);
+        $stmt->bindParam(":idVisiteur", $idVisiteur, PDO::PARAM_INT);
+        $stmt->bindParam(":mois", $mois, PDO::PARAM_STR);
+
+        $stmt->execute();
+        $lesLignes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		//$res = $this->monPdo->query($req);
+		//$lesLignes = $res->fetchAll();
 		return $lesLignes;
 	}
 /**
@@ -91,10 +103,17 @@ class PdoGsb{
 		foreach($lesCles as $unIdFrais){
 			$qte = $lesFrais[$unIdFrais];
 			$req = "update lignefraisforfait set lignefraisforfait.quantite = $qte
-			where lignefraisforfait.idvisiteur = '$idVisiteur' and lignefraisforfait.mois = '$mois'
-			and lignefraisforfait.idfraisforfait = '$unIdFrais' and lignefraisforfait.ARCHIVED != 1
+			where lignefraisforfait.idvisiteur = :idVisiteur and lignefraisforfait.mois = :mois
+			and lignefraisforfait.idfraisforfait = :unIdFrais and lignefraisforfait.ARCHIVED != 1
 			and lignefraisforfait.idvisiteur in (select visiteur.id from visiteur where visiteur.ARCHIVED != 1)";
-			$this->monPdo->exec($req);
+
+            $stmt = $this->monPdo->prepare($req);
+            $stmt->bindParam(":idVisiteur", $idVisiteur, PDO::PARAM_INT);
+            $stmt->bindParam(":mois", $mois, PDO::PARAM_STR);
+            $stmt->bindParam(":unIdFrais", $unIdFrais, PDO::PARAM_INT);
+
+            $stmt->execute();
+			//$this->monPdo->exec($req);
 		}
 
 	}
@@ -110,11 +129,19 @@ class PdoGsb{
 	{
 		$ok = false;
 		$req = "select count(*) as nblignesfrais from fichefrais
-		where fichefrais.mois = '$mois' and fichefrais.idvisiteur = '$idVisiteur'
+		where fichefrais.mois = :mois and fichefrais.idvisiteur = :idVisiteur and fichefrais.archived != 1";"
 		and fichefrais.ARCHIVED != 1 and fichefrais.idvisiteur in
         (select visiteur.id from visiteur where visiteur.ARCHIVED != 1)";
-		$res = $this->monPdo->query($req);
-		$laLigne = $res->fetch();
+
+        $stmt = $this->monPdo->prepare($req);
+        $stmt->bindParam(":idVisiteur", $idVisiteur, PDO::PARAM_INT);
+        $stmt->bindParam(":mois", $mois, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $laLigne = $stmt->fetch(PDO::FETCH_ASSOC);
+
+		//$res = $this->monPdo->query($req);
+		//$laLigne = $res->fetch();
 		if($laLigne['nblignesfrais'] == 0){
 			$ok = true;
 		}
@@ -127,12 +154,19 @@ class PdoGsb{
  * @return le mois sous la forme aaaamm
 */
 	public function dernierMoisSaisi($idVisiteur){
-		$req = "select max(mois) as dernierMois from fichefrais where fichefrais.idvisiteur = '$idVisiteur'
+		$req = "select max(mois) as dernierMois from fichefrais where fichefrais.idvisiteur = :idVisiteur
         and fichefrais.ARCHIVED != 1 and fichefrais.idvisiteur in
         (select visiteur.id from visiteur where visiteur.ARCHIVED != 1)";
-		$res = $this->monPdo->query($req);
-		$laLigne = $res->fetch();
-		$dernierMois = $laLigne['dernierMois'];
+
+        $stmt = $this->monPdo->prepare($req);
+        $stmt->bindParam(":idVisiteur", $idVisiteur, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $laLigne = $stmt->fetch(PDO::FETCH_ASSOC);
+        //$res = $this->monPdo->query($req);
+		//$laLigne = $res->fetch();
+
+        $dernierMois = $laLigne['dernierMois'];
 		return $dernierMois;
 	}
 
@@ -152,14 +186,26 @@ class PdoGsb{
 
 		}
 		$req = "insert into fichefrais(idvisiteur,mois,nbJustificatifs,montantValide,dateModif,idEtat)
-		values('$idVisiteur','$mois',0,0,now(),'CR')";
-		$this->monPdo->exec($req);
+		values(':idVisiteur',':mois',0,0,now(),'CR')";
+        $stmt = $this->monPdo->prepare($req);
+        $stmt->bindParam(":idVisiteur", $idVisiteur, PDO::PARAM_INT);
+        $stmt->bindParam(":mois", $mois, PDO::PARAM_STR);
+        $stmt->execute();
+
+
+        //$this->monPdo->exec($req);
 		$lesIdFrais = $this->getLesIdFrais();
 		foreach($lesIdFrais as $uneLigneIdFrais){
 			$unIdFrais = $uneLigneIdFrais['idfrais'];
 			$req = "insert into lignefraisforfait(idvisiteur,mois,idFraisForfait,quantite)
-			values('$idVisiteur','$mois','$unIdFrais',0)";
-			$this->monPdo->exec($req);
+			values(':idVisiteur',':mois','unIdFrais',0)";
+            $stmt = $this->monPdo->prepare($req);
+            $stmt->bindParam(":idVisiteur", $idVisiteur, PDO::PARAM_INT);
+            $stmt->bindParam(":mois", $mois, PDO::PARAM_STR);
+            $stmt->bindParam(":unIdFrais", $unIdFrais, PDO::PARAM_INT);
+            $stmt->execute();
+
+			//$this->monPdo->exec($req);
 		 }
 	}
 
@@ -171,13 +217,18 @@ class PdoGsb{
  * @return un tableau associatif de clé un mois -aaaamm- et de valeurs l'année et le mois correspondant
 */
 	public function getLesMoisDisponibles($idVisiteur){
-		$req = "select fichefrais.mois as mois from  fichefrais where fichefrais.idvisiteur ='$idVisiteur'
+		$req = "select fichefrais.mois as mois from  fichefrais where fichefrais.idvisiteur = :idVisiteur
         and fichefrais.ARCHIVED != 1 and fichefrais.idvisiteur in
         (select visiteur.id from visiteur where visiteur.ARCHIVED != 1)
 		order by fichefrais.mois desc ";
-		$res = $this->monPdo->query($req);
+
+        $stmt = $this->monPdo->prepare($req);
+        $stmt->bindParam(":idVisiteur", $idVisiteur, PDO::PARAM_INT);
+        $stmt->execute();
+
+		//$res = $this->monPdo->query($req);
 		$lesMois =array();
-		$laLigne = $res->fetch();
+		$laLigne = $stmt->fetch(); //$res->fetch();
 		while($laLigne != null)	{
 			$mois = $laLigne['mois'];
 			$numAnnee =substr( $mois,0,4);
@@ -187,7 +238,8 @@ class PdoGsb{
 		    "numAnnee"  => "$numAnnee",
 			"numMois"  => "$numMois"
              );
-			$laLigne = $res->fetch();
+            $laLigne = $stmt->fetch();
+			//$laLigne = $res->fetch();
 		}
 		return $lesMois;
 	}
@@ -201,10 +253,17 @@ class PdoGsb{
 	public function getLesInfosFicheFrais($idVisiteur,$mois){
 		$req = "select fichefrais.idEtat as idEtat, fichefrais.dateModif as dateModif, fichefrais.nbJustificatifs as nbJustificatifs,
 			fichefrais.montantValide as montantValide, etat.libelle as libEtat from  fichefrais inner join etat on fichefrais.idEtat = etat.id
-			where fichefrais.idvisiteur ='$idVisiteur' and fichefrais.mois = '$mois' and fichefrais.ARCHIVED != 1 and fichefrais.idvisiteur in
+			where fichefrais.idvisiteur =:idVisiteur and fichefrais.mois = :mois and fichefrais.ARCHIVED != 1 and fichefrais.idvisiteur in
             (select visiteur.id from visiteur where visiteur.ARCHIVED != 1)";
-		$res = $this->monPdo->query($req);
-		$laLigne = $res->fetch();
+
+        $stmt = $this->monPdo->prepare($req);
+        $stmt->bindParam(":idVisiteur", $idVisiteur, PDO::PARAM_INT);
+        $stmt->bindParam(":mois", $mois, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $laLigne = $stmt->fetch();
+        //$res = $this->monPdo->query($req);
+		//$laLigne = $res->fetch();
 		return $laLigne;
 	}
 /**
@@ -216,10 +275,17 @@ class PdoGsb{
  */
 
 	public function majEtatFicheFrais($idVisiteur,$mois,$etat){
-		$req = "update ficheFrais set idEtat = '$etat', dateModif = now()
-		where fichefrais.idvisiteur ='$idVisiteur' and fichefrais.mois = '$mois' and fichefrais.ARCHIVED != 1 and fichefrais.idvisiteur in
+		$req = "update ficheFrais set idEtat = :etat, dateModif = now()
+		where fichefrais.idvisiteur = :idVisiteur and fichefrais.mois = :mois and fichefrais.ARCHIVED != 1 and fichefrais.idvisiteur in
         (select visiteur.id from visiteur where visiteur.ARCHIVED != 1)";
-		$this->monPdo->exec($req);
+
+        $stmt = $this->monPdo->prepare($req);
+        $stmt->bindParam(":idVisiteur", $idVisiteur, PDO::PARAM_INT);
+        $stmt->bindParam(":mois", $mois, PDO::PARAM_STR);
+        $stmt->bindParam(":etat", $etat, PDO::PARAM_STR);
+        $stmt->execute();
+
+        //$this->monPdo->exec($req);
 	}
 
     /**
@@ -230,9 +296,14 @@ class PdoGsb{
      */
     public function getInfosGestionnaire($login, $mdp){
         $req = "select gestionnaire.id as id, gestionnaire.nom as nom, gestionnaire.prenom as prenom from gestionnaire
-        where gestionnaire.login='" . $login . "' and gestionnaire.mdp='" . $mdp ."'";
-        $rs = $this->monPdo->query($req);
-        $ligne = $rs->fetch();
+        where gestionnaire.login= :login and gestionnaire.mdp= :mdp";
+        $stmt = $this->monPdo->prepare($req);
+        $stmt->bindParam(":login", $login, PDO::PARAM_STR);
+        $stmt->bindParam(":mdp", $mdp, PDO::PARAM_STR);
+        $stmt->execute();
+        //$rs = $this->monPdo->query($req);
+        //$ligne = $rs->fetch();
+        $ligne = $stmt->fetch();
         return $ligne;
     }
 
